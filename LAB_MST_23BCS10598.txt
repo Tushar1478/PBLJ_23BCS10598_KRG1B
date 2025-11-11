@@ -1,0 +1,99 @@
+ import java.util.HashMap;
+import java.util.Scanner;
+
+// Custom exception for product not found
+class ProductNotFoundException extends Exception {
+    ProductNotFoundException(String message) {
+        super(message);
+    }
+}
+
+// Custom exception for employee not found
+class EmployeeNotFoundException extends Exception {
+    EmployeeNotFoundException(String message) {
+        super(message);
+    }
+}
+
+public class HashMapManager {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        HashMap<String, Double> products = new HashMap<>();
+        HashMap<Integer, String> employees = new HashMap<>();
+
+        while (true) {
+            System.out.println("\n--- Menu ---");
+            System.out.println("1. Add Product");
+            System.out.println("2. Apply Discount to Product");
+            System.out.println("3. Add Employee");
+            System.out.println("4. Get Employee Name by ID");
+            System.out.println("5. Display All Employees");
+            System.out.println("6. Exit");
+            System.out.print("Enter your choice: ");
+            int choice = sc.nextInt();
+
+            switch (choice) {
+                case 1: // Add product
+                    System.out.print("Enter product ID: ");
+                    String pid = sc.next();
+                    System.out.print("Enter price: ");
+                    double price = sc.nextDouble();
+                    products.put(pid, price);
+                    System.out.println("Added product: " + pid + "=$" + price);
+                    break;
+
+                case 2: // Apply discount
+                    System.out.print("Enter product ID: ");
+                    pid = sc.next();
+                    System.out.print("Enter discount %: ");
+                    double discount = sc.nextDouble();
+                    try {
+                        if (!products.containsKey(pid))
+                            throw new ProductNotFoundException("Product ID not found!");
+                        if (discount < 0 || discount > 100)
+                            throw new IllegalArgumentException("Discount percentage must be between 0 and 100!");
+                        double newPrice = products.get(pid) * (1 - discount / 100);
+                        products.put(pid, newPrice);
+                        System.out.println("New price for " + pid + ": $" + newPrice);
+                    } catch (Exception e) {
+                        System.out.println("Error: " + e.getMessage());
+                    }
+                    break;
+
+                case 3: // Add employee
+                    System.out.print("Enter employee ID: ");
+                    int eid = sc.nextInt();
+                    sc.nextLine(); // consume newline
+                    System.out.print("Enter employee name: ");
+                    String name = sc.nextLine();
+                    employees.put(eid, name);
+                    System.out.println("Added employee: " + eid + " = " + name);
+                    break;
+
+                case 4: // Get employee by ID
+                    System.out.print("Enter employee ID: ");
+                    eid = sc.nextInt();
+                    try {
+                        if (!employees.containsKey(eid))
+                            throw new EmployeeNotFoundException("Employee ID not found!");
+                        System.out.println("Name for ID " + eid + ": " + employees.get(eid));
+                    } catch (EmployeeNotFoundException e) {
+                        System.out.println("Error: " + e.getMessage());
+                    }
+                    break;
+
+                case 5: // Display all employees
+                    System.out.println("Employee Map: " + employees);
+                    break;
+
+                case 6:
+                    System.out.println("Exiting...");
+                    sc.close();
+                    System.exit(0);
+
+                default:
+                    System.out.println("Invalid choice! Try again.");
+            }
+        }
+    }
+}
